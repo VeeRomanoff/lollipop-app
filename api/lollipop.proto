@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+option go_package = "github.com/VeeRomanoff/Lollipop/pb/lollipop";
+
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+
+service Lollipop {
+  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+    option (google.api.http) = {
+      post: "/lollipop/get"
+      body: "*"
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/lollipop/update"
+      body: "*"
+    };
+  }
+
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/lollipop/register"
+      body: "*"
+    };
+  }
+
+  rpc DeleteUser(DeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/lollipop/delete"
+      body: "*"
+    };
+  }
+}
+
+// User
+message User {
+  // Идендификатор пользователя
+  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
+  // Имя
+  string name = 2;
+  // Возраст
+  int64 age = 3;
+  // Рост
+  float height = 4;
+  // Хобби
+  repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
+  // Описание
+  string description = 6;
+}
+
+message GetUserRequest {
+  // Идентификатор пользователя
+  int64 id = 1;
+}
+
+message GetUserResponse {
+  repeated User users = 1;
+}
+
+message UpdateUserRequest {
+  // Идендификатор обновляемого пользователя
+  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
+  // Имя
+  string name = 2;
+  // Возраст
+  int64 age = 3;
+  // Рост
+  float height = 4;
+  // Хобби
+  repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
+  // Описание
+  string description = 6;
+}
+
+message RegisterUserRequest {
+  // Идендификатор пользователя
+  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
+  // Имя
+  string name = 2;
+  // Возраст
+  int64 age = 3;
+  // Рост
+  float height = 4;
+  // Хобби
+  repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
+  // Описание
+  string description = 6;
+}
+
+message RegisterUserResponse {
+  // Идентификатор пользователя который вернется после создания
+  int64 user_id = 1;
+}
+
+message DeleteUserRequest {
+  // Идентификатор пользоваетля
+  int64 user_id = 1;
+}

@@ -8,4 +8,5 @@ type User struct {
 	Height      float32
 	Hobbies     []string
 	Description string
+	Email       string
 }

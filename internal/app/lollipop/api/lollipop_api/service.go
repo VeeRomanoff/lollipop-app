@@ -8,10 +8,11 @@ import (
 )
 
 // userService интерфейс для сервиса пользователей
+// TODO: create mocks?
 type userService interface {
-	GetUser(ctx context.Context, userID int64) (*domain.User, error)
+	GetUserById(ctx context.Context, userID int64) (*domain.User, error)
 	RegisterUser(ctx context.Context, user *domain.User) (int64, error)
-	UpdateUser(ctx context.Context, user *domain.User) error
+	UpdateUser(ctx context.Context, user *domain.User) (*domain.User, error)
 	DeleteUser(ctx context.Context, userID int64) error
 }
 

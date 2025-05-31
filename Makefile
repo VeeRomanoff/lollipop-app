@@ -1,9 +1,10 @@
 # Сгенерировать proto файлы
 generate:
-	protoc -I. -I./vendor/protogen --go_out=./internal/pb/lollipop \
-	--go-grpc_opt=require_unimplemented_servers=false
+	@echo "generating files from proto..."
+	@protoc -I. -I./vendor/protogen --go_out=./internal/pb/lollipop \
 	--go-grpc_out=./internal/pb/lollipop --go_opt=paths=source_relative \
 	--go-grpc_opt=paths=source_relative api/lollipop.proto
+	@echo "completed √"
 
 # Отчистка сгенерированных файлов
 clean:

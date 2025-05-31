@@ -7,14 +7,14 @@ import "google/api/field_behavior.proto";
 import "google/protobuf/empty.proto";
 
 service Lollipop {
-  rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+  rpc GetUserById(GetUserByIDRequest) returns (GetUserByIDResponse) {
     option (google.api.http) = {
       post: "/lollipop/get"
       body: "*"
     };
   }
 
-  rpc UpdateUser(UpdateUserRequest) returns (google.protobuf.Empty) {
+  rpc UpdateUser(UpdateUserRequest) returns (User) {
     option (google.api.http) = {
       post: "/lollipop/update"
       body: "*"
@@ -39,7 +39,7 @@ service Lollipop {
 // User
 message User {
   // Идендификатор пользователя
-  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
+  int64 id = 1 [(google.api.field_behavior) = REQUIRED];
   // Имя
   string name = 2;
   // Возраст
@@ -50,20 +50,23 @@ message User {
   repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
   // Описание
   string description = 6;
+  // Почта
+  string email = 7;
 }
 
-message GetUserRequest {
+message GetUserByIDRequest {
   // Идентификатор пользователя
   int64 id = 1;
 }
 
-message GetUserResponse {
-  repeated User users = 1;
+message GetUserByIDResponse {
+  // Пользователь
+  User user = 1;
 }
 
 message UpdateUserRequest {
   // Идендификатор обновляемого пользователя
-  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
+  int64 id = 1 [(google.api.field_behavior) = REQUIRED];
   // Имя
   string name = 2;
   // Возраст
@@ -74,21 +77,23 @@ message UpdateUserRequest {
   repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
   // Описание
   string description = 6;
+  // Почта
+  string email = 7;
 }
 
 message RegisterUserRequest {
-  // Идендификатор пользователя
-  int64 user_id = 1 [(google.api.field_behavior) = REQUIRED];
   // Имя
-  string name = 2;
+  string name = 2 [(google.api.field_behavior) = REQUIRED];
   // Возраст
-  int64 age = 3;
+  int64 age = 3 [(google.api.field_behavior) = REQUIRED];
+  // Почта
+  string email = 7 [(google.api.field_behavior) = REQUIRED];
   // Рост
-  float height = 4;
+  float height = 4 [(google.api.field_behavior) = OPTIONAL];
   // Хобби
   repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
   // Описание
-  string description = 6;
+  string description = 6 [(google.api.field_behavior) = OPTIONAL];
 }
 
 message RegisterUserResponse {

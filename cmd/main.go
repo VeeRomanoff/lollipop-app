@@ -5,12 +5,18 @@ import (
 	"github.com/VeeRomanoff/Lollipop/internal/database"
 	lollipop "github.com/VeeRomanoff/Lollipop/internal/pb/lollipop/api"
 	"github.com/VeeRomanoff/Lollipop/internal/services/users_service"
+	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"net/http"
 )
 
-const port = ":7001"
+const (
+	port        = ":7001"
+	metricsPort = ":8080"
+)
 
 func main() {
 	// Инициализация базы данных
@@ -31,10 +37,21 @@ func main() {
 		log.Fatalf("Failed to initialize grpc service: %v", err)
 	}
 	// Инциализация gRPC сервера
-	grpcServer := grpc.NewServer()
-	log.Printf("Starting gRPC server...")
+	grpcServer := grpc.NewServer(
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
+		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
+	)
 
 	lollipop.RegisterLollipopServer(grpcServer, service)
+	grpc_prometheus.Register(grpcServer)
+
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		log.Printf("Starting metrics on port: %s", metricsPort)
+		if err := http.ListenAndServe(metricsPort, nil); err != nil {
+			log.Fatalf("Failed to start metrics server: %v", err)
+		}
+	}()
 
 	listener, err := net.Listen("tcp", port)
 	if err != nil {

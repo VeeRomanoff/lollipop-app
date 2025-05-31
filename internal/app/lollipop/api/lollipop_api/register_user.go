@@ -3,7 +3,6 @@ package lollipop_api
 import (
 	"context"
 	"errors"
-
 	"github.com/VeeRomanoff/Lollipop/internal/domain"
 	desc "github.com/VeeRomanoff/Lollipop/internal/pb/lollipop/api"
 	"google.golang.org/grpc/codes"
@@ -18,12 +17,12 @@ func (i *Implementation) RegisterUser(ctx context.Context, req *desc.RegisterUse
 
 	//TODO FIX MAP
 	id, err := i.userService.RegisterUser(ctx, &domain.User{
-		ID:          req.UserId,
 		Name:        req.GetName(),
 		Age:         req.GetAge(),
 		Height:      req.GetHeight(),
 		Hobbies:     req.GetHobbies(),
 		Description: req.GetDescription(),
+		Email:       req.GetEmail(),
 	})
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())

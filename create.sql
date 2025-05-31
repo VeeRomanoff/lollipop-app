@@ -4,5 +4,10 @@ CREATE TABLE lollipop_users (
     age int,
     height float,
     hobbies jsonb,
-    description text
+    description text,
+    email text not null unique
 );
+
+ALTER TABLE lollipop_users
+    ADD COLUMN email text,
+    ADD CONSTRAINT unique_email UNIQUE (email);

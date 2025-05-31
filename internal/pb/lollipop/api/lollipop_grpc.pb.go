@@ -20,7 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Lollipop_GetUser_FullMethodName      = "/Lollipop/GetUser"
+	Lollipop_GetUserById_FullMethodName  = "/Lollipop/GetUserById"
 	Lollipop_UpdateUser_FullMethodName   = "/Lollipop/UpdateUser"
 	Lollipop_RegisterUser_FullMethodName = "/Lollipop/RegisterUser"
 	Lollipop_DeleteUser_FullMethodName   = "/Lollipop/DeleteUser"
@@ -30,8 +30,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LollipopClient interface {
-	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetUserById(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*RegisterUserResponse, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -44,19 +44,19 @@ func NewLollipopClient(cc grpc.ClientConnInterface) LollipopClient {
 	return &lollipopClient{cc}
 }
 
-func (c *lollipopClient) GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error) {
+func (c *lollipopClient) GetUserById(ctx context.Context, in *GetUserByIDRequest, opts ...grpc.CallOption) (*GetUserByIDResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, Lollipop_GetUser_FullMethodName, in, out, cOpts...)
+	out := new(GetUserByIDResponse)
+	err := c.cc.Invoke(ctx, Lollipop_GetUserById_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *lollipopClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *lollipopClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
+	out := new(User)
 	err := c.cc.Invoke(ctx, Lollipop_UpdateUser_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -88,8 +88,8 @@ func (c *lollipopClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 // All implementations must embed UnimplementedLollipopServer
 // for forward compatibility.
 type LollipopServer interface {
-	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*emptypb.Empty, error)
+	GetUserById(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedLollipopServer()
@@ -102,10 +102,10 @@ type LollipopServer interface {
 // pointer dereference when methods are called.
 type UnimplementedLollipopServer struct{}
 
-func (UnimplementedLollipopServer) GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUser not implemented")
+func (UnimplementedLollipopServer) GetUserById(context.Context, *GetUserByIDRequest) (*GetUserByIDResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserById not implemented")
 }
-func (UnimplementedLollipopServer) UpdateUser(context.Context, *UpdateUserRequest) (*emptypb.Empty, error) {
+func (UnimplementedLollipopServer) UpdateUser(context.Context, *UpdateUserRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
 func (UnimplementedLollipopServer) RegisterUser(context.Context, *RegisterUserRequest) (*RegisterUserResponse, error) {
@@ -135,20 +135,20 @@ func RegisterLollipopServer(s grpc.ServiceRegistrar, srv LollipopServer) {
 	s.RegisterService(&Lollipop_ServiceDesc, srv)
 }
 
-func _Lollipop_GetUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserRequest)
+func _Lollipop_GetUserById_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByIDRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(LollipopServer).GetUser(ctx, in)
+		return srv.(LollipopServer).GetUserById(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: Lollipop_GetUser_FullMethodName,
+		FullMethod: Lollipop_GetUserById_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LollipopServer).GetUser(ctx, req.(*GetUserRequest))
+		return srv.(LollipopServer).GetUserById(ctx, req.(*GetUserByIDRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -215,8 +215,8 @@ var Lollipop_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*LollipopServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetUser",
-			Handler:    _Lollipop_GetUser_Handler,
+			MethodName: "GetUserById",
+			Handler:    _Lollipop_GetUserById_Handler,
 		},
 		{
 			MethodName: "UpdateUser",

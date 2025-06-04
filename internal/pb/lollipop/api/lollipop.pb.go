@@ -39,9 +39,11 @@ type User struct {
 	// Описание
 	Description string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
 	// Почта
-	Email         string `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Email string `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
+	// Аватарка
+	ProfilePcitureLink string `protobuf:"bytes,8,opt,name=profile_pciture_link,json=profilePcitureLink,proto3" json:"profile_pciture_link,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *User) Reset() {
@@ -119,6 +121,13 @@ func (x *User) GetDescription() string {
 func (x *User) GetEmail() string {
 	if x != nil {
 		return x.Email
+	}
+	return ""
+}
+
+func (x *User) GetProfilePcitureLink() string {
+	if x != nil {
+		return x.ProfilePcitureLink
 	}
 	return ""
 }
@@ -496,7 +505,7 @@ var File_api_lollipop_proto protoreflect.FileDescriptor
 
 const file_api_lollipop_proto_rawDesc = "" +
 	"\n" +
-	"\x12api/lollipop.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xb0\x01\n" +
+	"\x12api/lollipop.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\"\xe2\x01\n" +
 	"\x04User\x12\x13\n" +
 	"\x02id\x18\x01 \x01(\x03B\x03\xe0A\x02R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x10\n" +
@@ -504,7 +513,8 @@ const file_api_lollipop_proto_rawDesc = "" +
 	"\x06height\x18\x04 \x01(\x02R\x06height\x12\x1d\n" +
 	"\ahobbies\x18\x05 \x03(\tB\x03\xe0A\x01R\ahobbies\x12 \n" +
 	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email\"$\n" +
+	"\x05email\x18\a \x01(\tR\x05email\x120\n" +
+	"\x14profile_pciture_link\x18\b \x01(\tR\x12profilePcitureLink\"$\n" +
 	"\x12GetUserByIDRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\"0\n" +
 	"\x13GetUserByIDResponse\x12\x19\n" +

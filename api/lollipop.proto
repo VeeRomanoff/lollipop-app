@@ -52,6 +52,8 @@ message User {
   string description = 6;
   // Почта
   string email = 7;
+  // Аватарка
+  string profile_pciture_link = 8;
 }
 
 message GetUserByIDRequest {

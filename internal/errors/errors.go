@@ -2,10 +2,12 @@ package errors
 
 import (
 	"errors"
+
 	"github.com/VeeRomanoff/Lollipop/internal/errors/error_wrapper"
 	"google.golang.org/grpc/codes"
 )
 
+// Sentinel Errors ...
 var (
 	// ErrNotFound ...
 	ErrNotFound = errors.New("not found")
@@ -17,6 +19,7 @@ var (
 	ErrFailedPrecondition = errors.New("failed precondition")
 )
 
+// HandleServiceError обработка ошибок на уровне grpc которые проходят с сервиса
 func HandleServiceError(err error) error {
 	if errors.Is(err, ErrNotFound) {
 		return error_wrapper.WithCode(codes.NotFound, err)

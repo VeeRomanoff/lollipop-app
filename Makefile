@@ -3,7 +3,9 @@ generate:
 	@echo "generating files from proto..."
 	@protoc -I. -I./vendor/protogen --go_out=./internal/pb/lollipop \
 	--go-grpc_out=./internal/pb/lollipop --go_opt=paths=source_relative \
-	--go-grpc_opt=paths=source_relative api/lollipop.proto
+	--go-grpc_opt=paths=source_relative api/lollipop.proto \
+	--grpc-gateway_out ./internal/pb/lollipop --grpc-gateway_opt paths=source_relative \
+
 	@echo "completed √"
 
 # Отчистка сгенерированных файлов

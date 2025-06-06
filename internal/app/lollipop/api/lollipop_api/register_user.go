@@ -28,6 +28,11 @@ func (i *Implementation) RegisterUser(ctx context.Context, req *desc.RegisterUse
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
+	_, err = i.userService.ExtractAndUploadImage(ctx, req.GetProfilePicture())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
 	return &desc.RegisterUserResponse{
 		UserId: id,
 	}, nil

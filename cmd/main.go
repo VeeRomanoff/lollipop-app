@@ -1,24 +1,29 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"net"
+	"net/http"
+
 	httphandlers "github.com/VeeRomanoff/Lollipop/internal/app/http_handlers"
 	"github.com/VeeRomanoff/Lollipop/internal/app/lollipop/api/lollipop_api"
 	"github.com/VeeRomanoff/Lollipop/internal/database"
 	lollipop "github.com/VeeRomanoff/Lollipop/internal/pb/lollipop/api"
 	"github.com/VeeRomanoff/Lollipop/internal/s3"
 	"github.com/VeeRomanoff/Lollipop/internal/services/users_service"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
-	"log"
-	"net"
-	"net/http"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 const (
-	port        = ":7001"
+	grpcPort    = ":7001"
 	metricsPort = ":8080"
+	gatewayPort = ":8090"
 )
 
 func main() {
@@ -63,6 +68,30 @@ func main() {
 		grpc.UnaryInterceptor(grpc_prometheus.UnaryServerInterceptor),
 	)
 
+	conn, err := grpc.NewClient(
+		"0.0.0.0:7001",
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
+	if err != nil {
+		log.Fatalf("failed to dial server: %v", err)
+	}
+
+	gatewayMux := runtime.NewServeMux()
+	err = lollipop.RegisterLollipopHandler(context.Background(), gatewayMux, conn)
+	if err != nil {
+		log.Fatalf("failed to register gateway handler: %v", err)
+	}
+
+	gatewayServer := &http.Server{
+		Addr:    gatewayPort,
+		Handler: gatewayMux,
+	}
+
+	go func() {
+		fmt.Println("gateway server listening on " + gatewayPort)
+		log.Fatalln(gatewayServer.ListenAndServe())
+	}()
+
 	lollipop.RegisterLollipopServer(grpcServer, service)
 	grpc_prometheus.Register(grpcServer)
 
@@ -74,12 +103,12 @@ func main() {
 		}
 	}()
 
-	listener, err := net.Listen("tcp", port)
+	listener, err := net.Listen("tcp", grpcPort)
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
 
-	log.Printf("Listening on port: %s", port)
+	log.Printf("Listening on port: %s", grpcPort)
 
 	if err = grpcServer.Serve(listener); err != nil {
 		log.Fatalf("Failed to serve: %v", err)

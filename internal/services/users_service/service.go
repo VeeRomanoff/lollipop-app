@@ -56,10 +56,6 @@ func (s *Service) UpdateUser(ctx context.Context, userReq *domain.User) (*domain
 		return nil, fmt.Errorf("updating user: %w", err)
 	}
 
-	if updatedUser.Hobbies == nil {
-
-	}
-
 	return updatedUser, nil
 }
 
@@ -68,6 +64,7 @@ func (s *Service) validateUpdateUser(ctx context.Context, userReq *domain.User) 
 		return nil, internal_errors.ErrInvalidArgument
 	}
 
+	// Получаем пользователя по id
 	userExists, err := s.GetUserById(ctx, userReq.ID)
 	if userExists == nil {
 		return nil, internal_errors.ErrNotFound
@@ -78,6 +75,8 @@ func (s *Service) validateUpdateUser(ctx context.Context, userReq *domain.User) 
 
 	// TODO сначала проверить с новой структурой вс полями от существующегшо юзера
 	// todo потом проверить сам существующий юзер и на нем обновлять поля
+
+	// Обновляемый пользователь
 	var userToUpdate = &domain.User{
 		ID:          userExists.ID,
 		Name:        userExists.Name,

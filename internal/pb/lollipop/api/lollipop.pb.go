@@ -324,19 +324,21 @@ func (x *UpdateUserRequest) GetEmail() string {
 type RegisterUserRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Имя
-	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Возраст
-	Age int64 `protobuf:"varint,3,opt,name=age,proto3" json:"age,omitempty"`
+	Age int64 `protobuf:"varint,2,opt,name=age,proto3" json:"age,omitempty"`
 	// Почта
-	Email string `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
+	Email string `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
 	// Рост
 	Height float32 `protobuf:"fixed32,4,opt,name=height,proto3" json:"height,omitempty"`
 	// Хобби
 	Hobbies []string `protobuf:"bytes,5,rep,name=hobbies,proto3" json:"hobbies,omitempty"`
 	// Описание
-	Description   string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Description string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	// Аватарка
+	ProfilePicture []byte `protobuf:"bytes,7,opt,name=profile_picture,json=profilePicture,proto3" json:"profile_picture,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *RegisterUserRequest) Reset() {
@@ -409,6 +411,13 @@ func (x *RegisterUserRequest) GetDescription() string {
 		return x.Description
 	}
 	return ""
+}
+
+func (x *RegisterUserRequest) GetProfilePicture() []byte {
+	if x != nil {
+		return x.ProfilePicture
+	}
+	return nil
 }
 
 type RegisterUserResponse struct {
@@ -526,14 +535,15 @@ const file_api_lollipop_proto_rawDesc = "" +
 	"\x06height\x18\x04 \x01(\x02R\x06height\x12\x1d\n" +
 	"\ahobbies\x18\x05 \x03(\tB\x03\xe0A\x01R\ahobbies\x12 \n" +
 	"\vdescription\x18\x06 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05email\x18\a \x01(\tR\x05email\"\xc3\x01\n" +
+	"\x05email\x18\a \x01(\tR\x05email\"\xf1\x01\n" +
 	"\x13RegisterUserRequest\x12\x17\n" +
-	"\x04name\x18\x02 \x01(\tB\x03\xe0A\x02R\x04name\x12\x15\n" +
-	"\x03age\x18\x03 \x01(\x03B\x03\xe0A\x02R\x03age\x12\x19\n" +
-	"\x05email\x18\a \x01(\tB\x03\xe0A\x02R\x05email\x12\x1b\n" +
+	"\x04name\x18\x01 \x01(\tB\x03\xe0A\x02R\x04name\x12\x15\n" +
+	"\x03age\x18\x02 \x01(\x03B\x03\xe0A\x02R\x03age\x12\x19\n" +
+	"\x05email\x18\x03 \x01(\tB\x03\xe0A\x02R\x05email\x12\x1b\n" +
 	"\x06height\x18\x04 \x01(\x02B\x03\xe0A\x01R\x06height\x12\x1d\n" +
 	"\ahobbies\x18\x05 \x03(\tB\x03\xe0A\x01R\ahobbies\x12%\n" +
-	"\vdescription\x18\x06 \x01(\tB\x03\xe0A\x01R\vdescription\"/\n" +
+	"\vdescription\x18\x06 \x01(\tB\x03\xe0A\x01R\vdescription\x12,\n" +
+	"\x0fprofile_picture\x18\a \x01(\fB\x03\xe0A\x01R\x0eprofilePicture\"/\n" +
 	"\x14RegisterUserResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x03R\x06userId\",\n" +
 	"\x11DeleteUserRequest\x12\x17\n" +

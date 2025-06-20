@@ -6,13 +6,6 @@ import (
 	"log"
 )
 
-// TODO export sensitive variables to environment config
-const (
-	Endpoint        = "localhost:9000"
-	AccessKeyID     = "minioadmin"
-	AccessKeySecret = "minioadmin"
-)
-
 type Config struct {
 	Endpoint  string
 	AccessKey string
@@ -21,7 +14,7 @@ type Config struct {
 }
 
 type MinioStore struct {
-	Client *minio.Client
+	client *minio.Client
 }
 
 func NewClient(config Config) *MinioStore {
@@ -34,7 +27,7 @@ func NewClient(config Config) *MinioStore {
 	}
 
 	minioStore := &MinioStore{
-		Client: minioClient,
+		client: minioClient,
 	}
 
 	return minioStore

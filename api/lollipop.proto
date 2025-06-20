@@ -53,7 +53,7 @@ message User {
   // Почта
   string email = 7;
   // Аватарка
-  string profile_pciture_link = 8;
+  string image_link = 8;
 }
 
 message GetUserByIDRequest {
@@ -96,8 +96,8 @@ message RegisterUserRequest {
   repeated string hobbies = 5 [(google.api.field_behavior) = OPTIONAL];
   // Описание
   string description = 6 [(google.api.field_behavior) = OPTIONAL];
-  // Аватарка
-  bytes profile_picture = 7 [(google.api.field_behavior) = OPTIONAL];
+  // Ссылка на аватарку
+  string image_url = 8 [(google.api.field_behavior) = OPTIONAL];
 }
 
 message RegisterUserResponse {

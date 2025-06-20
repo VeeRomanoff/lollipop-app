@@ -15,7 +15,6 @@ func (i *Implementation) RegisterUser(ctx context.Context, req *desc.RegisterUse
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	//TODO FIX MAP
 	id, err := i.userService.RegisterUser(ctx, &domain.User{
 		Name:        req.GetName(),
 		Age:         req.GetAge(),
@@ -24,11 +23,6 @@ func (i *Implementation) RegisterUser(ctx context.Context, req *desc.RegisterUse
 		Description: req.GetDescription(),
 		Email:       req.GetEmail(),
 	})
-	if err != nil {
-		return nil, status.Error(codes.Internal, err.Error())
-	}
-
-	_, err = i.userService.ExtractAndUploadImage(ctx, req.GetProfilePicture())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

@@ -14,7 +14,6 @@ type userService interface {
 	RegisterUser(ctx context.Context, user *domain.User) (int64, error)
 	UpdateUser(ctx context.Context, user *domain.User) (*domain.User, error)
 	DeleteUser(ctx context.Context, userID int64) error
-	ExtractAndUploadImage(ctx context.Context, bytes []byte) (string, error)
 }
 
 type Implementation struct {

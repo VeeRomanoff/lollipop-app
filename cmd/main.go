@@ -52,7 +52,7 @@ func main() {
 	}
 
 	// Инициализация user service
-	uService, err := initUserService(db)
+	uService, err := initUserService(db, client)
 	if err != nil {
 		log.Fatalf("Failed to initialize user service: %v", err)
 	}
@@ -115,10 +115,11 @@ func main() {
 	}
 }
 
-func initUserService(db *database.Database) (*users_service.Service, error) {
-	return &users_service.Service{
+func initUserService(db *database.Database, client *s3.MinioStore) (*users_service.Service, error) {
+	return users_service.NewService(
 		db,
-	}, nil
+		client,
+	), nil
 }
 
 func initService(userService *users_service.Service) (*lollipop_api.Implementation, error) {

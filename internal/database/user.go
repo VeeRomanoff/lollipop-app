@@ -96,8 +96,6 @@ func (db *Database) GetUserByID(ctx context.Context, id int64) (*domain.User, er
 		return nil, fmt.Errorf("failed to build get query: %w", err)
 	}
 
-	log.Printf("Query: %s, Args: %v", query, args) // fixme for debugging
-
 	tx, err := db.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, fmt.Errorf("beggining transaction: %w", err)
@@ -232,4 +230,36 @@ func (db *Database) DeleteUser(ctx context.Context, userID int64) error {
 	}
 
 	return nil
+}
+
+func (db *Database) GetUserByEmail(ctx context.Context, email string) (*domain.User, error) {
+	tx, err := db.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	query, args, err := queryBuilder().
+		Select(
+			usersColumnEmail,
+		).From(usersTableName).
+		Where(sq.Eq{"email": email}).
+		ToSql()
+	if err != nil {
+		return nil, fmt.Errorf("failed to build select query: %w", err)
+	}
+
+	var userRetrieved domain.User
+
+	if err = tx.QueryRowContext(ctx, query, args...).
+		Scan(
+			&userRetrieved.Email,
+		); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, fmt.Errorf("failed to scan row: %w", err)
+	}
+
+	return &userRetrieved, nil
 }

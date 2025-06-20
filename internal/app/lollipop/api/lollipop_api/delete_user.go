@@ -23,7 +23,7 @@ func (i *Implementation) DeleteUser(ctx context.Context, req *desc.DeleteUserReq
 
 func validateDeleteUser(req *desc.DeleteUserRequest) error {
 	if req.GetUserId() == 0 {
-		return errors.New("invalid id lmao")
+		return errors.New("invalid id")
 	}
 
 	return nil

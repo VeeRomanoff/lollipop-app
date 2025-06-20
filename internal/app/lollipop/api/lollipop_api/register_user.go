@@ -15,7 +15,6 @@ func (i *Implementation) RegisterUser(ctx context.Context, req *desc.RegisterUse
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	//TODO FIX MAP
 	id, err := i.userService.RegisterUser(ctx, &domain.User{
 		Name:        req.GetName(),
 		Age:         req.GetAge(),

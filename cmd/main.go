@@ -3,6 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/VeeRomanoff/Lollipop/internal/services/cache"
+	"github.com/VeeRomanoff/Lollipop/internal/services/s3"
+	"github.com/redis/go-redis/v9"
 	"log"
 	"net"
 	"net/http"
@@ -11,7 +14,6 @@ import (
 	"github.com/VeeRomanoff/Lollipop/internal/app/lollipop/api/lollipop_api"
 	"github.com/VeeRomanoff/Lollipop/internal/database"
 	lollipop "github.com/VeeRomanoff/Lollipop/internal/pb/lollipop/api"
-	"github.com/VeeRomanoff/Lollipop/internal/s3"
 	"github.com/VeeRomanoff/Lollipop/internal/services/users_service"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -24,6 +26,7 @@ const (
 	grpcPort    = ":7001"
 	metricsPort = ":8080"
 	gatewayPort = ":8090"
+	redisPort   = ":6379"
 )
 
 func main() {
@@ -51,8 +54,22 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	// Инициализация redis
+	rOptions := cache.RedisOptions{
+		Addr:     "localhost" + redisPort,
+		Password: "",
+		DB:       0,
+	}
+	rClient := initRedisClient(rOptions)
+	ping, err := rClient.Ping(context.Background()).Result()
+	if err != nil {
+		fmt.Errorf(err.Error())
+		return
+	}
+	fmt.Println(ping)
+
 	// Инициализация user service
-	uService, err := initUserService(db, client)
+	uService, err := initUserService(db, rClient)
 	if err != nil {
 		log.Fatalf("Failed to initialize user service: %v", err)
 	}
@@ -115,10 +132,10 @@ func main() {
 	}
 }
 
-func initUserService(db *database.Database, client *s3.MinioStore) (*users_service.Service, error) {
+func initUserService(db *database.Database, redis *redis.Client) (*users_service.Service, error) {
 	return users_service.NewService(
 		db,
-		client,
+		redis,
 	), nil
 }
 
@@ -141,4 +158,8 @@ func initHTTPServer(mediaStoreClient *s3.MinioStore, port string) error {
 	}
 
 	return nil
+}
+
+func initRedisClient(opts cache.RedisOptions) *redis.Client {
+	return cache.NewRedisClient(opts)
 }

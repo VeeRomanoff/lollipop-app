@@ -21,6 +21,7 @@ $(GEN_DIR):
 # Сгенерировать proto файлы
 generate: init-submodule
 	@echo "Generating files from proto..."
+	@mkdir -p internal/pb/lollipop
 	@protoc -I. \
 		-I$(GEN_DIR) \
 		--go_out=./internal/pb/lollipop/ \

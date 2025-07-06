@@ -2,28 +2,27 @@ package users_service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/VeeRomanoff/Lollipop/internal/database"
 	"github.com/VeeRomanoff/Lollipop/internal/domain"
 	internal_errors "github.com/VeeRomanoff/Lollipop/internal/errors"
-	"github.com/VeeRomanoff/Lollipop/internal/s3"
+	"github.com/redis/go-redis/v9"
 	"log"
 )
 
 var id int64
 
-const salt = "ABCDEFHJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
-
 type Service struct {
-	DB           *database.Database
-	mediaStorage *s3.MinioStore
+	DB    *database.Database
+	redis *redis.Client
 }
 
 // NewService Инициализация сервиса пользователей
-func NewService(db *database.Database, mediaStorage *s3.MinioStore) *Service {
+func NewService(db *database.Database, redis *redis.Client) *Service {
 	return &Service{
-		DB:           db,
-		mediaStorage: mediaStorage,
+		DB:    db,
+		redis: redis,
 	}
 }
 
@@ -50,6 +49,15 @@ func (s *Service) RegisterUser(ctx context.Context, user *domain.User) (int64, e
 
 // GetUserById получение юзера по ID
 func (s *Service) GetUserById(ctx context.Context, userID int64) (*domain.User, error) {
+	userCached, err := s.GetUserByIdFromCache(ctx, userID)
+	if err != nil {
+		log.Printf("user with id %d not found, checking in the database...", userID)
+	}
+
+	if userCached != nil {
+		return userCached, nil
+	}
+
 	user, err := s.DB.GetUserByID(ctx, userID)
 	if user == nil {
 		return nil, internal_errors.ErrNotFound
@@ -57,7 +65,15 @@ func (s *Service) GetUserById(ctx context.Context, userID int64) (*domain.User, 
 	if err != nil {
 		return nil, fmt.Errorf("getting user by id: %w", err)
 	}
-	log.Printf("user: %v", user)
+
+	bUser, err := json.Marshal(user)
+	if err != nil {
+		return nil, fmt.Errorf("error marshalling user: %w", err)
+	}
+
+	if err = s.redis.Set(ctx, fmt.Sprintf("user:%d", user.ID), bUser, 0).Err(); err != nil {
+		return nil, fmt.Errorf("error redis set %d, %w", user.ID, err)
+	}
 
 	return user, nil
 }
